@@ -1,6 +1,4 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import databaseOptions from './ormconfig';
-import configuration from './ormconfig';
 import { User } from './user/user.entity';
 import {
   Module,
@@ -11,6 +9,7 @@ import {
 import { APP_GUARD } from '@nestjs/core';
 import { AuthMiddleware } from './middleware/Logger.Middleware';
 import { AuthGuard } from './guards/myGuard.guard';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -22,8 +21,8 @@ import { UserModule } from './user/user.module';
       type: 'mysql',
       host: 'localhost',
       port: 3306,
-      username: 'ovla',
-      password: 'ovla',
+      username: 'root',
+      password: 'andi',
       database: 'nest_auth',
       entities:[User],
       synchronize: true,
