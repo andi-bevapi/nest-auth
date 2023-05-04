@@ -1,16 +1,26 @@
-import { Controller,Get,Post,Request} from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
+import { Controller,Get,Post,Request,Body} from '@nestjs/common';
+import { User } from "../user/user.entity";
+import {AuthService} from "./auth.service";
 
 @Controller('api')
 export class AuthController {
 
-    constructor(private readonly userService:UserService){}
+    constructor(private readonly authService:AuthService){}
 
-    @Get('register')
-    public authenticate(@Request() request):Promise<any>{
+    @Get('all-user')
+    public getAll(){
+        return this.authService.getAllUsers();
+    }
 
-        console.log("test-register");
+    @Post('register')
+    public async authenticate(
+        @Body("firstname") firstname:string,
+        @Body("lastname") lastname:string,
+        @Body("email") email:string,
+        @Body("password") password:string
+        ): Promise<User>{
 
-        return this.userService.findAll();
+        const result = await this.authService.registerUser(firstname,lastname,email,password);
+        return result;
     }
 }
