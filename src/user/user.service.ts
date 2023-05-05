@@ -31,14 +31,15 @@ export class UserService {
     email: string,
     password: string,
   ) {
-    const result = this.usersRepository.create({
+
+    const result = this.usersRepository.save({
       firstName: username,
       lastName: lastname,
       email: email,
       password: password,
     });
 
-    console.log("result----in user service",result);
+    
 
     return result;
   }
