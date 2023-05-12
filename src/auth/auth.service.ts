@@ -1,14 +1,19 @@
 import { HttpException,HttpStatus ,Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
-import {hashPassword} from "../helpers/index";
+import {hashPassword,comparePassword} from "../helpers/index";
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-constructor(private readonly userService:UserService){
+constructor(private readonly userService:UserService,private jwtService:JwtService){
 }
 
 public async getAllUsers():Promise<any>{
-    return this.userService.findAll();
+    try{
+      return this.userService.findAll();
+    }catch(err){
+      return err;
+    }
 }
 
 public async registerUser(username:string,lastname:string,email:string,password:string):Promise<any>{
@@ -34,8 +39,15 @@ public async loginUser(email:string,password:string):Promise<any>{
     const user = await this.userService.findByEmail(email);
 
     if(user){
-     const comparePassword = this.comparePassword(password,user.password);
+     const comparePass = await comparePassword(password,user.password);
+     if(comparePass){
+      const token = this.jwtService.sign({payload:user}); 
+       return token;
+     }
+     throw new HttpException("Password does not match", HttpStatus.UNAUTHORIZED);
     }
+    throw new HttpException("User does not exist", HttpStatus.NOT_FOUND);
+
   }catch(error){
     console.log("error---auth-service",error);
     return error;

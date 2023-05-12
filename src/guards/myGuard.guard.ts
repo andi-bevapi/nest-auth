@@ -7,14 +7,23 @@ export class AuthGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
 
-    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+    const isPublic = this.reflector.getAllAndOverride<boolean>("public",[context.getHandler(),context.getClass()]);
+    console.log('---roles--as---isPublic--', isPublic);
+
+    if (isPublic) {
+      return true
+    }
+
     const request = context.switchToHttp().getRequest();
-    const userRoles = request.headers?.roles?.split(',');
-    request.user = "i am user";
+    const roles = request.user["roles"];
 
-    console.log("----Guards---");
+    console.log('---roles----', roles);
 
-
-    return true;
+    if(roles === "guest" && typeof isPublic === "undefined"){
+      return true
+    } else{
+      throw new UnauthorizedException()
+    }
+    
   }
 }

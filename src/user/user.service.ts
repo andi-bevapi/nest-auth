@@ -39,8 +39,6 @@ export class UserService {
       password: password,
     });
 
-    
-
     return result;
   }
 }
